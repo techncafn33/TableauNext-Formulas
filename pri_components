@@ -3,33 +3,53 @@
 -- =====================================================
 
 -- -----------------------------------------------------
--- Sales Cycle Risk Score
+-- Sales Cycle Deviation Score
 -- -----------------------------------------------------
+--SQL:
 CASE
   WHEN Deal_Age_Days > Avg_Sales_Cycle_Won THEN 1
   ELSE 0
 END
 
+--converted formula:
+IF((DATEDIFF('day', [Opportunity].[Created Date], TODAY())) > 
+(IF [Is Won Opportunity?] THEN  datediff('minute', [Opportunity].[Created Date], [Opportunity].[Close Date]) / (24*60) end) ) 
+THEN 1 ELSE 0 END
+
 -- -----------------------------------------------------
--- Deal Size Risk Score
+-- Deal Size Risk 
 -- -----------------------------------------------------
+--SQL:
 CASE
   WHEN Amount > AVG(Amount) THEN 0.5
   ELSE 0
 END
 
+--converted formula:
+IF (SUM([Opportunity Product].[Product Quantity] * [Opportunity Product].[List Price Amount]) > 
+AVG([Opportunity Product].[Product Quantity] * [Opportunity Product].[List Price Amount])) 
+THEN 0.5 ELSE 0 END
+
 -- -----------------------------------------------------
--- Forecast Confidence Risk Score
+-- Forecast Confidence Gap
 -- -----------------------------------------------------
+--SQL:
 CASE
   WHEN Probability < Win_Rate THEN 1
   ELSE 0
 END
 
+--converted formula:
+IF (SUM([Opportunity].[Probability]) < ([Won Opportunities] / [Opportunities])) THEN 1 ELSE 0 END
+
 -- -----------------------------------------------------
 -- Recency Risk Score
 -- -----------------------------------------------------
+--SQL:
 CASE
   WHEN DATEDIFF('day', LastModifiedDate, TODAY()) > 14 THEN 1
   ELSE 0
 END
+
+--converted formula:
+IF DATEDIFF('day', [Task_Home].[Last Modified Date], TODAY()) > 14 THEN 1 ELSE 0 END
