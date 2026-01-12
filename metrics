@@ -7,32 +7,33 @@
 -- -----------------------------------------------------
 -- Represents expected revenue based on probability-
 -- adjusted opportunity amount.
-
+--SQL summary
 SUM(
   Amount * Probability
 )
+--converted formula:
+SUM(FLOAT(IF [Is Open Opportunity?] THEN 
+[Probability %] * [Opportunity Product].[Product Quantity]*[Opportunity Product].[List Price Amount] END))
 
 -- -----------------------------------------------------
 -- Win Rate
 -- -----------------------------------------------------
 -- Ratio of closed-won opportunities to all closed outcomes.
 
-SUM(
-  CASE WHEN StageName = 'Closed Won' THEN 1 ELSE 0 END
-)
-/
-SUM(
-  CASE WHEN StageName IN ('Closed Won', 'Closed Lost') THEN 1 ELSE 0 END
-)
+[Won Opportunities] / [Opportunities]
 
 -- -----------------------------------------------------
 -- Sales Cycle (Won)
 -- -----------------------------------------------------
 -- Average number of days to close a successful deal.
-
+--SQL summary
 AVG(
   DATEDIFF('day', CreatedDate, CloseDate)
 )
+
+--converted formula:
+AVG(FLOAT(IF [Is Won Opportunity?] THEN
+datediff('minute', [Opportunity].[Created Date], [Opportunity].[Close Date]) / (24*60) END))
 
 -- -----------------------------------------------------
 -- Pipeline Risk Index (PRI)
@@ -40,8 +41,8 @@ AVG(
 -- Composite risk score derived from normalized components.
 
 (
-  Sales_Cycle_Risk_Score * 0.25 +
-  Deal_Size_Risk_Score   * 0.20 +
-  Forecast_Risk_Score    * 0.15 +
-  Recency_Risk_Score     * 0.10
+  Sales_Cycle_Deviation_Score * 0.25 +
+  Deal_Size_Risk   * 0.20 +
+  Forecast_Confidence_Gap    * 0.15 +
+  Recency_Risk     * 0.10
 ) * 100
