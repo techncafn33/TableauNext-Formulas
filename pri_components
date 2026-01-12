@@ -5,7 +5,7 @@
 -- -----------------------------------------------------
 -- Sales Cycle Deviation Score
 -- -----------------------------------------------------
---SQL:
+--SQL summary:
 CASE
   WHEN Deal_Age_Days > Avg_Sales_Cycle_Won THEN 1
   ELSE 0
@@ -19,7 +19,7 @@ THEN 1 ELSE 0 END
 -- -----------------------------------------------------
 -- Deal Size Risk 
 -- -----------------------------------------------------
---SQL:
+--SQL summary:
 CASE
   WHEN Amount > AVG(Amount) THEN 0.5
   ELSE 0
@@ -33,7 +33,7 @@ THEN 0.5 ELSE 0 END
 -- -----------------------------------------------------
 -- Forecast Confidence Gap
 -- -----------------------------------------------------
---SQL:
+--SQL summary:
 CASE
   WHEN Probability < Win_Rate THEN 1
   ELSE 0
@@ -45,7 +45,7 @@ IF (SUM([Opportunity].[Probability]) < ([Won Opportunities] / [Opportunities])) 
 -- -----------------------------------------------------
 -- Recency Risk Score
 -- -----------------------------------------------------
---SQL:
+--SQLsummary:
 CASE
   WHEN DATEDIFF('day', LastModifiedDate, TODAY()) > 14 THEN 1
   ELSE 0
