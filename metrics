@@ -1,0 +1,47 @@
+-- =====================================================
+-- Tableau Next Semantic Metrics
+-- =====================================================
+
+-- -----------------------------------------------------
+-- Weighted Pipeline Value
+-- -----------------------------------------------------
+-- Represents expected revenue based on probability-
+-- adjusted opportunity amount.
+
+SUM(
+  Amount * Probability
+)
+
+-- -----------------------------------------------------
+-- Win Rate
+-- -----------------------------------------------------
+-- Ratio of closed-won opportunities to all closed outcomes.
+
+SUM(
+  CASE WHEN StageName = 'Closed Won' THEN 1 ELSE 0 END
+)
+/
+SUM(
+  CASE WHEN StageName IN ('Closed Won', 'Closed Lost') THEN 1 ELSE 0 END
+)
+
+-- -----------------------------------------------------
+-- Sales Cycle (Won)
+-- -----------------------------------------------------
+-- Average number of days to close a successful deal.
+
+AVG(
+  DATEDIFF('day', CreatedDate, CloseDate)
+)
+
+-- -----------------------------------------------------
+-- Pipeline Risk Index (PRI)
+-- -----------------------------------------------------
+-- Composite risk score derived from normalized components.
+
+(
+  Sales_Cycle_Risk_Score * 0.25 +
+  Deal_Size_Risk_Score   * 0.20 +
+  Forecast_Risk_Score    * 0.15 +
+  Recency_Risk_Score     * 0.10
+) * 100
